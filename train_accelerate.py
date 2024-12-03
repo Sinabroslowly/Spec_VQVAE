@@ -1,6 +1,5 @@
 import os
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
-os.environ["TORCH_DISTRIBUTED_DEBUG"] = "OFF"
 import torch
 import torch.optim as optim
 import torch.distributed as dist
@@ -21,7 +20,7 @@ from scripts.stft import STFT
 
 
 
-LR = 1e-4
+LR = 1e-5
 ADAM_BETA = (0.0, 0.99)
 ADAM_EPS = 1e-8
 ENC_LR = 2e-4
@@ -170,7 +169,7 @@ def main():
     parser.add_argument("--dataset", type=str, default="./datasets", help="Dataset path")
     parser.add_argument("--epochs", type=int, default=100, help="Total epochs to train the model.")
     parser.add_argument("--from_pretrained", type=str, default=None, help="The checkpoint name for pretraining")
-    parser.add_argument("--version", type=str, default="trial_01", help="The version of VQ-VAE training")
+    parser.add_argument("--version", type=str, default="trial_02", help="The version of VQ-VAE training")
     parser.add_argument("--embedding_dim", type=int, default=3, help="Embedding dimension for VQ-VAE.")
     parser.add_argument("--num_embeddings", type=int, default=128, help="Number of embeddings for VQ-VAE.")
     parser.add_argument("--commitment_cost", type=float, default=0.25, help="Commitment cost for VQ-VAE.")
@@ -193,7 +192,7 @@ def main():
         down_block_types=("DownEncoderBlock2D", "DownEncoderBlock2D", "DownEncoderBlock2D", "DownEncoderBlock2D"),
         up_block_types=("UpDecoderBlock2D", "UpDecoderBlock2D", "UpDecoderBlock2D", "UpDecoderBlock2D"),
         block_out_channels=(32, 64, 128, 256),
-        layers_per_block=1,
+        layers_per_block=2,
         act_fn="silu",
         sample_size=512,
         latent_channels=8,
@@ -221,7 +220,7 @@ def main():
 
     model, optimizer, train_loader, val_loader = accelerator.prepare(
         model,
-        optim.Adam(model.parameters(), lr=LR),
+        optim.Adam(model.parameters(), lr=LR, betas=ADAM_BETA, eps=ADAM_EPS),
         train_loader,
         val_loader
     )
