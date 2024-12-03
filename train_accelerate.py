@@ -217,9 +217,12 @@ def main():
 
     lpips_loss = lpips.LPIPS(net='vgg').to(device)
 
-    model, optimizer, train_loader, val_loader = accelerator.prepare(
+    optimizer = optim.Adam(model.parameters(), lr=LR, betas=ADAM_BETA, eps=ADAM_EPS)
+
+    model, optimizer, scheduler, train_loader, val_loader = accelerator.prepare(
         model,
-        optim.Adam(model.parameters(), lr=LR, betas=ADAM_BETA, eps=ADAM_EPS),
+        optimizer,
+        optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=100)
         train_loader,
         val_loader
     )
