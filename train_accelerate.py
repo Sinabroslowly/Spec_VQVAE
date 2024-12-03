@@ -28,7 +28,7 @@ DEC_LR = 2e-4
 LAMBDA_1 = 5e+1
 LAMBDA_2 = 1e+2
 LAMBDA_3 = 1e+1
-LAMBDAS = [1, 1, 1, 1] # [Spec Recon, Quantization, T60_error, LPIPS Loss]
+LAMBDAS = [1, 1e-2, 1, 1] # [Spec Recon, Quantization, T60_error, LPIPS Loss]
 
 def train(model, train_loader, val_loader, optimizer, scheduler, device, stft, lpips_loss, start_epoch, best_val_loss, args, accelerator):
     if accelerator.is_main_process:
