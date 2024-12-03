@@ -223,7 +223,7 @@ def main():
     model, optimizer, scheduler, train_loader, val_loader = accelerator.prepare(
         model,
         optimizer,
-        optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=100)
+        optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=100),
         train_loader,
         val_loader
     )
