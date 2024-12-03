@@ -1,3 +1,4 @@
 pyroomacoustics==0.7.5
 lpips==0.1.4
 pynvml==11.5.3
+soundfile==0.10.3.post1
