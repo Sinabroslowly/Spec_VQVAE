@@ -30,7 +30,7 @@ LAMBDA_2 = 1e+2
 LAMBDA_3 = 1e+1
 LAMBDAS = [1, 1, 1, 1] # [Spec Recon, Quantization, T60_error, LPIPS Loss]
 
-def train(model, train_loader, val_loader, optimizer, device, stft, lpips_loss, start_epoch, best_val_loss, args, accelerator):
+def train(model, train_loader, val_loader, optimizer, scheduler, device, stft, lpips_loss, start_epoch, best_val_loss, args, accelerator):
     if accelerator.is_main_process:
         writer = SummaryWriter(log_dir=os.path.join(args.logs, args.version))
     
@@ -72,6 +72,7 @@ def train(model, train_loader, val_loader, optimizer, device, stft, lpips_loss, 
             optimizer.zero_grad()
             accelerator.backward(loss)
             optimizer.step()
+            scheduler.step()
 
             train_loss_total += loss.item()
             train_loss_1 += reconstruction_spec_loss.item()
@@ -226,7 +227,7 @@ def main():
         train_loader,
         val_loader
     )
-    train(model, train_loader, val_loader, optimizer, device, STFT(), lpips_loss, start_epoch, best_val_loss, args=args, accelerator=accelerator)
+    train(model, train_loader, val_loader, optimizer, scheduler, device, STFT(), lpips_loss, start_epoch, best_val_loss, args=args, accelerator=accelerator)
 
 if __name__ == "__main__":
     main()
